@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --tsi-ink: #161616;
+  --tsi-gold: #e3c088;
+  --tsi-cream: #fde6c1;
+  --background: var(--tsi-ink);
+  --foreground: var(--tsi-cream);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--tsi-ink);
+  --color-gold: var(--tsi-gold);
+  --color-cream: var(--tsi-cream);
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, "Helvetica Neue", Arial,
+    sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/*
+ * Écran de projection 16:9.
+ * --u = 1 % de la largeur de la scène 16:9 (qui tient toujours dans l'écran),
+ * toutes les tailles de l'écran gala sont exprimées en multiples de --u :
+ * 1280×720, 1920×1080 ou 4K donnent exactement la même composition.
+ */
+:root {
+  --u: min(1vw, calc(100dvh * 16 / 900));
+}
+
+.gala-stage {
+  width: calc(var(--u) * 100);
+  height: calc(var(--u) * 56.25);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Frise : fondu progressif vers le fond #161616 (motif continu sur toute la largeur) */
+.gala-frieze {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 22%,
+    rgb(0 0 0 / 0.55) 60%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 22%,
+    rgb(0 0 0 / 0.55) 60%,
+    transparent 100%
+  );
+}
+
+/* Logos posés sur la frise : léger halo sombre pour rester nets et lisibles */
+.gala-logo {
+  filter: drop-shadow(0 0 calc(var(--u) * 0.15) rgb(22 22 22 / 0.95))
+    drop-shadow(0 0 calc(var(--u) * 0.6) rgb(22 22 22 / 0.85));
+}
+
+/* Indicateur flottant « + 500 000 FCFA » */
+@keyframes gala-increment {
+  0% {
+    opacity: 0;
+    transform: translateY(0.9em);
+  }
+  14% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-0.4em);
+  }
+}
+
+.gala-increment {
+  animation: gala-increment 3.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gala-increment {
+    animation-duration: 0.01s;
+  }
 }
